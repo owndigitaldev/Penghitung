@@ -6,12 +6,45 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _isDarkMode = false;
-  int _count = 0;
+  bool _isDarkMode;
+
+  int _count;
+  GlobalKey<ScaffoldState> _scaffoldKey;
+
+  void _addCount({Function function}) {
+    setState(() {
+      _count++;
+    });
+
+    if (_count % 100 == 0) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Cieee... Suwung yaa...."),
+        duration: Duration(seconds: 2),
+        action: SnackBarAction(
+            label: "Tutup",
+            onPressed: () {
+              _scaffoldKey.currentState.hideCurrentSnackBar();
+            }),
+      ));
+    }
+
+    if (function != null) {
+      function.call();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkMode = false;
+    _count = 0;
+    _scaffoldKey = new GlobalKey<ScaffoldState>();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.white,
       appBar: AppBar(
         backgroundColor: _isDarkMode ? Colors.black : Colors.white,
@@ -48,8 +81,20 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text("Total"),
-                  Text(_count.toString()),
+                  Text(
+                    "Total",
+                    style: TextStyle(
+                      color: _isDarkMode ? Colors.white : Colors.black,
+                      fontSize: 32.0,
+                    ),
+                  ),
+                  Text(
+                    _count.toString(),
+                    style: TextStyle(
+                      color: _isDarkMode ? Colors.white : Colors.black,
+                      fontSize: 64.0,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -58,18 +103,26 @@ class _HomePageState extends State<HomePage> {
             flex: 2,
             child: Center(
               child: RawMaterialButton(
-                onPressed: () {
-                  setState(() {
-                    _count++;
-                  });
-                },
+                onPressed: () => _addCount(),
+                onLongPress: () => _addCount(function: () {
+                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text("Jangan Ngecheat Anjing"),
+                    duration: Duration(seconds: 2),
+                    action: SnackBarAction(
+                        label: "Tutup",
+                        onPressed: () {
+                          _scaffoldKey.currentState.hideCurrentSnackBar();
+                        }),
+                  ));
+                }),
                 elevation: 2.0,
-                fillColor: Colors.white,
+                fillColor: _isDarkMode ? Colors.black : Colors.white,
                 child: Icon(
                   Icons.add,
-                  size: 35.0,
+                  size: 86.0,
+                  color: _isDarkMode ? Colors.white : Colors.black,
                 ),
-                padding: EdgeInsets.all(15.0),
+                padding: EdgeInsets.all(64.0),
                 shape: CircleBorder(),
               ),
             ),
